@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+.loader {
+  border: 2px solid white;
+  border-right-color: transparent;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes draw {
+  0% {
+    stroke-dasharray: 0, 100;
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dasharray: 100, 100;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Dấu tick vẽ dần nhưng các nét giữ nguyên */
+.tick-path {
+  stroke-dasharray: 100, 100;
+  stroke-dashoffset: 100;
+  animation: draw 2s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Hiện thông báo ngay lập tức */
+.animate-fade-in {
+  animation: fade-in 0.8s ease-in-out forwards;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
