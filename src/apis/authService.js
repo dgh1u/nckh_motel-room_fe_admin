@@ -2,7 +2,7 @@ import axios from "@/http";
 
 // Đăng nhập
 export const login = (email, password) => {
-  return axios.post("login", { email, password }).then((response) => {
+  return axios.post("auth/login", { email, password }).then((response) => {
     console.log("response: ", response);
     if (response?.success) {
       // Lưu thông tin người dùng vào localStorage nếu success

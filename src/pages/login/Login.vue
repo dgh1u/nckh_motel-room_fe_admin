@@ -179,7 +179,7 @@ const handleLogin = async () => {
     const user = await authService.login(email.value, password.value);
     if (user && user.token) {
       if (user.roles && user.roles.includes("Admin")) {
-        router.push("/home");
+        router.push("/home/dashboard");
       } else {
         generalError.value =
           "Bạn không có quyền truy cập. Vui lòng liên hệ Quản trị viên!";

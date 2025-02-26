@@ -57,3 +57,36 @@ input:focus {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
+/* Nút Xanh Da Trời */
+.blue-button {
+  color: #1890ff;
+  padding-bottom: 8px !important;
+}
+.blue-button:hover,
+.blue-button:focus {
+  background-color: rgba(24, 144, 255, 0.2) !important;
+  padding-bottom: 8px !important;
+}
+
+/* Nút Xanh Lá */
+.green-button {
+  color: #52c41a;
+  padding-bottom: 8px !important;
+}
+.green-button:hover,
+.green-button:focus {
+  background-color: rgba(82, 196, 26, 0.2) !important;
+  padding-bottom: 8px !important;
+}
+
+/* Nút Đỏ Nhạt */
+.red-button {
+  color: #ff7875;
+  padding-bottom: 8px !important;
+}
+.red-button:hover,
+.red-button:focus {
+  background-color: rgba(255, 120, 117, 0.2) !important;
+  padding-bottom: 8px !important;
+}
