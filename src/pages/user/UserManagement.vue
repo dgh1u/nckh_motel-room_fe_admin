@@ -1,5 +1,12 @@
 <template>
   <div class="p-4">
+    <AddUser v-model:open="showAddUserPopup" @user-added="fetchUsers" />
+    <UserDetail v-model:open="showUserDetailPopup" :userId="selectedUserId" />
+    <EditUser
+      v-model:open="showEditUserPopup"
+      :userId="selectedUserId"
+      @user-updated="fetchUsers"
+    />
     <div class="flex items-center justify-between mb-4">
       <!-- Khu vực tìm kiếm và lọc -->
       <div class="flex gap-4">
@@ -26,10 +33,24 @@
           <a-select-option :value="false">Hoạt động</a-select-option>
           <a-select-option :value="true">Bị khóa</a-select-option>
         </a-select>
+        <!-- Bộ lọc vai trò -->
+        <a-select
+          v-model:value="selectedRole"
+          placeholder="Lọc theo vai trò"
+          style="width: 200px"
+          @change="handleFilterChange"
+        >
+          <a-select-option :value="null">Tất cả</a-select-option>
+          <a-select-option value="ADMIN">Admin</a-select-option>
+          <a-select-option value="CUSTOMER">Khách hàng</a-select-option>
+          <a-select-option value="EMPLOYEE">Nhân viên</a-select-option>
+        </a-select>
       </div>
 
       <!-- Nút Thêm người dùng ở góc phải -->
-      <a-button type="primary" @click="addUser"> Thêm người dùng </a-button>
+      <a-button type="primary" @click="openAddUserPopup">
+        Thêm người dùng
+      </a-button>
     </div>
 
     <!-- Bảng danh sách người dùng -->
@@ -47,6 +68,23 @@
           {{ index + 1 + pagination.pageSize * (pagination.current - 1) }}
         </template>
 
+        <!-- Vai trò -->
+
+        <template v-if="column.key === 'role'">
+          <span
+            :style="{
+              color:
+                record.role?.roleId === 'ADMIN'
+                  ? 'red'
+                  : record.role?.roleId === 'EMPLOYEE'
+                  ? 'green'
+                  : 'blue',
+            }"
+          >
+            {{ record.role?.name || "Không có vai trò" }}
+          </span>
+        </template>
+
         <!-- Trạng thái khóa -->
         <template v-if="column.key === 'block'">
           <a-tag :color="record.block ? 'red' : 'green'">
@@ -59,7 +97,7 @@
           <a-button type="link" @click="viewUser(record)">
             <template #icon><EyeOutlined /></template>
           </a-button>
-          <a-button type="link" @click="editUser(record)">
+          <a-button type="link" @click="openEditUserPopup(record)">
             <template #icon><EditOutlined /></template>
           </a-button>
           <a-button type="link" danger @click="confirmDelete(record)">
@@ -72,7 +110,7 @@
 </template>
 <script>
 import { ref, onMounted } from "vue";
-import { getListUser } from "@/apis/userService";
+import { deleteUser, getListUser } from "@/apis/userService";
 import { message, Modal } from "ant-design-vue";
 import {
   PlusOutlined,
@@ -82,6 +120,9 @@ import {
   EyeOutlined,
 } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
+import AddUser from "./AddUser.vue";
+import UserDetail from "./UserDetail.vue";
+import EditUser from "./EditUser.vue";
 
 export default {
   components: {
@@ -90,22 +131,45 @@ export default {
     EditOutlined,
     DeleteOutlined,
     SearchOutlined,
+    AddUser,
+    UserDetail,
+    EditUser,
   },
   setup() {
     const users = ref([]);
     const loading = ref(false);
     const searchText = ref("");
-    const selectedStatus = ref(null); // Trạng thái khóa/mở khóa
+    const selectedStatus = ref(null);
+    const selectedRole = ref(null);
     const pagination = ref({ current: 1, pageSize: 6, total: 0 });
     const router = useRouter();
+    const showAddUserPopup = ref(false);
+    const showUserDetailPopup = ref(false);
+    const showEditUserPopup = ref(false);
+
+    const selectedUserId = ref(null);
+
+    const openAddUserPopup = () => {
+      showAddUserPopup.value = true;
+    };
+    const closeAddUserPopup = () => {
+      showAddUserPopup.value = false;
+    };
+
+    const openEditUserPopup = (record) => {
+      selectedUserId.value = record.id;
+      showEditUserPopup.value = true;
+    };
 
     // Cấu hình các cột cho bảng
     const columns = [
       { title: "STT", key: "stt" },
       { title: "Họ tên", dataIndex: "fullName", key: "fullName" },
-      { title: "Email", dataIndex: "email", key: "email" },
+
+      { title: "Vai trò", key: "role" },
       { title: "Địa chỉ", dataIndex: "address", key: "address" },
       { title: "Số điện thoại", dataIndex: "phone", key: "phone" },
+
       { title: "Trạng thái", dataIndex: "block", key: "block" },
       { title: "Hành động", key: "action", width: 140 },
     ];
@@ -115,10 +179,11 @@ export default {
       loading.value = true;
       try {
         const params = {
-          start: Math.max(pagination.value.current - 1, 0), // Đảm bảo start không âm
-          limit: pagination.value.pageSize, // Số lượng user trên mỗi trang
-          keywords: searchText.value.trim(), // ✅ Tìm kiếm theo tên
-          block: selectedStatus.value, // ✅ Lọc theo trạng thái
+          start: Math.max(pagination.value.current - 1, 0),
+          limit: pagination.value.pageSize,
+          keywords: searchText.value.trim(),
+          block: selectedStatus.value,
+          roleId: selectedRole.value,
         };
 
         const res = await getListUser(params);
@@ -143,31 +208,20 @@ export default {
       fetchUsers();
     };
 
-    // ✅ Xử lý khi người dùng tìm kiếm
+    //  Xử lý khi người dùng tìm kiếm
     const handleSearch = () => {
-      pagination.value.current = 1; // Khi tìm kiếm, luôn về trang đầu tiên
+      pagination.value.current = 1;
       fetchUsers();
     };
 
-    // ✅ Xử lý khi người dùng chọn trạng thái khóa/mở khóa
     const handleFilterChange = () => {
-      pagination.value.current = 1; // Khi lọc, luôn về trang đầu tiên
+      pagination.value.current = 1;
       fetchUsers();
     };
 
-    // ✅ Xem chi tiết người dùng
     const viewUser = (record) => {
-      router.push(`/admin/user/view/${record.id}`);
-    };
-
-    // ✅ Điều hướng đến trang thêm người dùng
-    const addUser = () => {
-      router.push(`/admin/user/add`);
-    };
-
-    // Xử lý chỉnh sửa người dùng
-    const editUser = (record) => {
-      router.push(`/admin/user/edit/${record.id}`);
+      selectedUserId.value = record.id;
+      showUserDetailPopup.value = true;
     };
 
     // Xác nhận và xóa người dùng
@@ -197,15 +251,21 @@ export default {
       loading,
       searchText,
       selectedStatus,
+      selectedRole,
       pagination,
       fetchUsers,
       handleTableChange,
       handleSearch,
       handleFilterChange,
-      editUser,
       confirmDelete,
       viewUser,
-      addUser,
+      showAddUserPopup,
+      openAddUserPopup,
+      closeAddUserPopup,
+      showUserDetailPopup,
+      selectedUserId,
+      showEditUserPopup,
+      openEditUserPopup,
     };
   },
 };

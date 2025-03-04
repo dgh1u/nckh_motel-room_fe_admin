@@ -90,3 +90,15 @@ input:focus {
   background-color: rgba(255, 120, 117, 0.2) !important;
   padding-bottom: 8px !important;
 }
+
+@font-face {
+  font-family: "Peanut Butter";
+  src: url("@/assets/fonts/Peanut Butter.ttf") format("truetype"),
+    url("@/assets/fonts/Peanut Butter.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.peanut-text {
+  font-family: "Peanut Butter", cursive;
+}

@@ -2,7 +2,38 @@
   <div class="flex flex-col h-full">
     <!-- Logo -->
     <div class="flex items-center justify-center h-28 mt-4 mb-6">
-      <img src="@/assets/vnua-logo.png" alt="Logo" class="h-20 w-auto" />
+      <svg width="500" height="200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="white" />
+
+        <image
+          href="@/assets/vnua-logo.jpg"
+          x="40"
+          y="70"
+          height="70"
+          width="70"
+        />
+
+        <text
+          x="65%"
+          y="55%"
+          font-family="Impact"
+          font-size="41"
+          fill="black"
+          text-anchor="middle"
+        >
+          VNUA
+        </text>
+        <text
+          x="65%"
+          y="68%"
+          font-family="'Peanut Butter', cursive"
+          font-size="28"
+          fill="black"
+          text-anchor="middle"
+        >
+          Services
+        </text>
+      </svg>
     </div>
 
     <!-- Sidebar Menu -->

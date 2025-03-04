@@ -16,7 +16,7 @@
         <Header />
       </div>
 
-      <!-- Nội dung trang (Giữ nội dung, màu nền trùng màu trình duyệt) -->
+      <!-- Nội dung trang  -->
       <div class="flex-1 p-3 overflow-auto">
         <router-view />
       </div>

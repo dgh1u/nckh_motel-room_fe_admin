@@ -10,11 +10,6 @@
           alt="Logo"
           class="w-12 h-14 object-contain"
         />
-        <img
-          src="@/assets/vnua-logo.png"
-          alt="Logo"
-          class="w-14 h-14 object-contain"
-        />
       </div>
 
       <!-- Title -->
@@ -126,16 +121,16 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import * as authService from "@/apis/authService.js";
+import { useAuthStore } from "../../stores/store"; // Import Pinia store
 
 const email = ref("");
 const password = ref("");
-const rememberMe = ref(false);
 const showPassword = ref(false);
 const loading = ref(false);
 const errors = ref({});
 const generalError = ref("");
 const router = useRouter();
+const authStore = useAuthStore();
 
 const validateInput = () => {
   errors.value = {};
@@ -176,18 +171,10 @@ const handleLogin = async () => {
   }
 
   try {
-    const user = await authService.login(email.value, password.value);
-    if (user && user.token) {
-      if (user.roles && user.roles.includes("Admin")) {
-        router.push("/home/dashboard");
-      } else {
-        generalError.value =
-          "Bạn không có quyền truy cập. Vui lòng liên hệ Quản trị viên!";
-      }
-    }
-  } catch (error) {
-    generalError.value =
-      error?.message || "Sai thông tin tài khoản hoặc mật khẩu!";
+    await authStore.login(email.value, password.value);
+    router.push("/home/dashboard");
+  } catch (err) {
+    generalError.value = err?.message || "Đăng nhập thất bại!";
   } finally {
     loading.value = false;
   }

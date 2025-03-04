@@ -1,4 +1,3 @@
-// Import các component cần thiết
 import Login from "../pages/login/Login.vue";
 import Logout from "../pages/logout/Logout.vue";
 
@@ -8,7 +7,7 @@ export default [
     name: "Login",
     component: Login,
     meta: {
-      requiresAuth: false, // Không yêu cầu đăng nhập
+      requiresAuth: false,
     },
   },
   {
@@ -16,7 +15,7 @@ export default [
     name: "Logout",
     component: Logout,
     meta: {
-      requiresAuth: true, // Chỉ dành cho người dùng đã đăng nhập
+      requiresAuth: true,
     },
   },
 ];

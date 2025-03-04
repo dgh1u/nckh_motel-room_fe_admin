@@ -1,4 +1,3 @@
-// Import các component cần thiết
 import Home from "../pages/home/Home.vue";
 import NotFound from "../pages/not-found/NotFound.vue";
 import Recharge from "../pages/recharge/Recharge.vue";

@@ -1,12 +1,12 @@
 <template>
   <div class="flex justify-between items-center w-full relative px-4">
-    <!-- 📌 Hiển thị icon và tiêu đề trang bên trái -->
+    <!-- Hiển thị icon và tiêu đề trang bên trái -->
     <div class="flex items-center gap-3 text-2xl pt-3">
       <component :is="currentPageIcon" class="w-6 h-6 pb-0.5 text-gray-700" />
       <span>{{ currentPageTitle }}</span>
     </div>
 
-    <!-- 🔽 Thông tin người dùng bên phải -->
+    <!--  Thông tin người dùng bên phải -->
     <div class="flex items-center gap-4">
       <span class="text-gray-700 text-lg">{{ fullName }}</span>
 
@@ -53,9 +53,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import * as authService from "@/apis/authService";
+import { useAuthStore } from "../../stores/store";
 import {
   LogOut,
   CircleUserRound,
@@ -71,11 +71,8 @@ import {
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 
-const token = ref(null);
-const fullName = ref("");
-const isAuthenticated = ref(false);
-const currentUser = ref(null);
 const isDropdownOpen = ref(false);
 
 const pageTitles = {
@@ -88,43 +85,36 @@ const pageTitles = {
   "/home/post/delivery": { title: "BÀI ĐĂNG GIAO HÀNG", icon: Truck },
 };
 
-// 📌 Xác định trang hiện tại
-const currentPageTitle = computed(() => {
-  return pageTitles[route.path]?.title || "Trang chính";
-});
+//  Xác định trang hiện tại
+const currentPageTitle = computed(
+  () => pageTitles[route.path]?.title || "Trang chính"
+);
 
-// 📌 Xác định icon trang hiện tại
-const currentPageIcon = computed(() => {
-  return pageTitles[route.path]?.icon || Home;
-});
+//  Xác định icon trang hiện tại
+const currentPageIcon = computed(() => pageTitles[route.path]?.icon || Home);
 
-// ✅ Kiểm tra trạng thái đăng nhập
-const checkAuthentication = () => {
-  const user = authService.getCurrentUser();
-  if (user && user.token) {
-    token.value = user.token;
-    fullName.value = user.fullName || "Người dùng";
-    currentUser.value = user;
-    isAuthenticated.value = true;
-  } else {
-    isAuthenticated.value = false;
-    console.warn("Không tìm thấy token hoặc người dùng chưa đăng nhập.");
-  }
-};
+//  Lấy thông tin user từ Pinia (Cập nhật tự động khi đăng nhập)
+const fullName = computed(() => authStore.user?.fullName || "Người dùng");
+const currentUser = computed(() => authStore.user);
+const isAuthenticated = computed(() => authStore.isAuthenticated);
 
-// 🔽 Toggle dropdown menu
+//  Toggle dropdown menu
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-// 🔽 Logout
-const logout = () => {
-  authService.logout();
-  router.push("/login");
-  isDropdownOpen.value = false;
-};
+//  Logout
+const logout = async () => {
+  try {
+    await authStore.logout();
+    isDropdownOpen.value = false;
 
-onMounted(() => {
-  checkAuthentication();
-});
+    // Kiểm tra nếu người dùng đã đăng xuất thành công
+    if (!authStore.isAuthenticated) {
+      router.push("/login");
+    }
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
 </script>
