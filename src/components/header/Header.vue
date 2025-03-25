@@ -14,8 +14,8 @@
       <div class="relative">
         <div @click="toggleDropdown" class="cursor-pointer">
           <img
-            v-if="currentUser?.avatar"
-            :src="currentUser.avatar"
+            v-if="avatarUrl"
+            :src="avatarUrl"
             alt="Avatar"
             class="w-10 h-10 rounded-full object-cover"
           />
@@ -73,7 +73,8 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
-const isDropdownOpen = ref(false);
+// Thêm computed property lấy avatar từ store (giống Header.vue)
+const avatarUrl = computed(() => authStore.avatar);
 
 const pageTitles = {
   "/home/dashboard": { title: "TỔNG QUAN", icon: ChartPie },
@@ -95,10 +96,12 @@ const currentPageIcon = computed(() => pageTitles[route.path]?.icon || Home);
 
 //  Lấy thông tin user từ Pinia (Cập nhật tự động khi đăng nhập)
 const fullName = computed(() => authStore.user?.fullName || "Người dùng");
+// Bạn vẫn có thể sử dụng currentUser nếu cần cho các mục đích khác
 const currentUser = computed(() => authStore.user);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 //  Toggle dropdown menu
+const isDropdownOpen = ref(false);
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
@@ -108,8 +111,6 @@ const logout = async () => {
   try {
     await authStore.logout();
     isDropdownOpen.value = false;
-
-    // Kiểm tra nếu người dùng đã đăng xuất thành công
     if (!authStore.isAuthenticated) {
       router.push("/login");
     }

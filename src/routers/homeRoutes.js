@@ -6,9 +6,9 @@ import Dashboard from "../pages/dashboard/Dashboard.vue";
 import Action from "../pages/action/Action.vue";
 
 // Import các loại bài đăng
-import MotelPost from "../pages/post/MotelPost.vue";
 import ShopPost from "../pages/post/ShopPost.vue";
 import DeliveryPost from "../pages/post/deliveryPost.vue";
+import MotelManagement from "../pages/post/motel/MotelManagement.vue";
 
 export default [
   {
@@ -46,7 +46,7 @@ export default [
       {
         path: "post/motel",
         name: "MotelPost",
-        component: MotelPost,
+        component: MotelManagement,
         meta: { requiresAuth: false },
       },
       {

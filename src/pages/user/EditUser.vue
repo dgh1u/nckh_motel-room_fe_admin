@@ -53,6 +53,42 @@
           </a-form-item>
         </div>
       </div>
+
+      <!-- Trường upload avatar (tuỳ chọn) -->
+      <a-form-item label="Avatar">
+        <div class="flex items-center space-x-4">
+          <!-- Hiển thị ảnh hiện tại (nếu có) -->
+          <div>
+            <img
+              v-if="avatarUrl"
+              :src="avatarUrl"
+              alt="Avatar"
+              class="w-24 h-24 rounded-full object-cover border"
+            />
+            <div
+              v-else
+              class="w-24 h-24 flex items-center justify-center rounded-full bg-gray-100 border border-gray-300"
+            >
+              <span class="text-gray-400 text-sm">No Image</span>
+            </div>
+          </div>
+          <!-- Nút chọn file -->
+          <div>
+            <label
+              for="avatarInput"
+              class="cursor-pointer inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Chọn ảnh
+            </label>
+            <input
+              id="avatarInput"
+              type="file"
+              class="hidden"
+              @change="handleFileChange"
+            />
+          </div>
+        </div>
+      </a-form-item>
     </a-form>
 
     <!-- Nút Xác nhận căn giữa -->
@@ -66,8 +102,9 @@
 
 <script>
 import { ref, watch } from "vue";
-import { getUserById, updateUser } from "@/apis/userService";
 import { message } from "ant-design-vue";
+import { getUserById, updateUser } from "@/apis/userService";
+import { getAvatar, postAvatar } from "@/apis/userService";
 
 export default {
   props: {
@@ -86,35 +123,28 @@ export default {
       roleId: "",
     });
 
+    // Lưu file đã chọn
+    const selectedFile = ref(null);
+    // URL hiển thị avatar (dạng base64)
+    const avatarUrl = ref("");
+
     const loading = ref(false);
 
-    // Khi mở popup, tải dữ liệu từ API
+    // Lấy thông tin user & avatar khi mở popup
     watch(
       () => props.open,
       async (newVal) => {
-        console.log("Popup edit open:", newVal);
         if (newVal && props.userId) {
-          console.log("Fetching user with ID:", props.userId);
           try {
             const response = await getUserById(props.userId);
-            console.log("Fetched user data:", response);
-
-            // Kiểm tra và lấy dữ liệu đúng từ API
-            let responseData = response?.data || response?.result || response;
-
-            console.log("Extracted User Data:", responseData);
-
-            if (!responseData || !responseData.id) {
-              console.error(
-                "Error: User data does not contain an ID!",
-                responseData
-              );
-              message.error("Lỗi: Dữ liệu API không hợp lệ!");
-              return;
-            }
-
-            // ✅ Gán ID vào form để đảm bảo ID được gửi khi cập nhật
+            // Tuỳ vào backend trả về
+            const responseData = response?.data || response?.result || response;
             userForm.value = { ...responseData };
+
+            // Lấy avatar
+            const avatarRes = await getAvatar(props.userId);
+            // Giả sử BE trả về { data: "chuỗi base64" }
+            avatarUrl.value = `data:image/png;base64,${avatarRes.data}`;
           } catch (error) {
             console.error("Error fetching user data:", error);
             message.error("Không thể tải dữ liệu người dùng!");
@@ -123,30 +153,44 @@ export default {
       }
     );
 
-    // Gửi request cập nhật người dùng
-    const handleSubmit = async () => {
-      console.log("Submitting update for user:", userForm.value);
+    // Khi người dùng chọn file
+    const handleFileChange = (event) => {
+      selectedFile.value = event.target.files[0] || null;
+    };
 
+    // Submit form (update thông tin + upload avatar nếu có)
+    const handleSubmit = async () => {
       if (!userForm.value.id) {
-        console.error("Error: User ID is missing!", userForm.value);
         message.error("Lỗi: ID người dùng không tồn tại!");
         return;
       }
 
+      loading.value = true;
       try {
+        // Cập nhật thông tin user
         await updateUser(userForm.value);
-        console.log("User updated successfully:", userForm.value);
+
+        // Nếu có file được chọn thì upload avatar
+        if (selectedFile.value) {
+          await postAvatar(userForm.value.id, selectedFile.value);
+        }
+
         message.success("Cập nhật người dùng thành công!");
         emit("update:open", false);
         emit("user-updated");
       } catch (error) {
         console.error("Update user failed:", error);
         message.error("Cập nhật thất bại!");
+      } finally {
+        loading.value = false;
       }
     };
 
     return {
       userForm,
+      avatarUrl,
+      selectedFile,
+      handleFileChange,
       handleSubmit,
       loading,
       emit,
@@ -156,26 +200,20 @@ export default {
 </script>
 
 <style scoped>
-/* Tiêu đề căn giữa */
 .popup-header {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 20px;
 }
-
-/* Chia form thành 2 cột */
 .form-container {
   display: flex;
   justify-content: space-between;
   gap: 20px;
 }
-
 .form-column {
   flex: 1;
 }
-
-/* Căn giữa nút Xác nhận */
 .confirm-button {
   display: flex;
   justify-content: center;

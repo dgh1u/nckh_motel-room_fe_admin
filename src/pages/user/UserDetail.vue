@@ -11,6 +11,24 @@
       <h2>CHI TIẾT NGƯỜI DÙNG</h2>
     </div>
 
+    <!-- Phần hiển thị avatar -->
+    <div class="flex justify-center mb-6">
+      <div class="relative">
+        <img
+          v-if="avatarUrl"
+          :src="avatarUrl"
+          alt="Avatar"
+          class="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+        />
+        <div
+          v-else
+          class="w-32 h-32 flex items-center justify-center rounded-full bg-gray-100 border border-gray-300"
+        >
+          <span class="text-gray-400 text-sm">No Image</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Form hiển thị thông tin -->
     <a-form layout="vertical">
       <div class="form-container">
@@ -71,8 +89,8 @@
 </template>
 
 <script>
-import { ref, watch, defineProps, defineEmits } from "vue";
-import { getUserById } from "@/apis/userService";
+import { ref, watch } from "vue";
+import { getUserById, getAvatar } from "@/apis/userService";
 import { message } from "ant-design-vue";
 
 export default {
@@ -84,6 +102,7 @@ export default {
   setup(props, { emit }) {
     const userDetail = ref({});
     const roleName = ref("");
+    const avatarUrl = ref("");
 
     const fetchUserDetail = async () => {
       if (!props.userId) return;
@@ -94,7 +113,18 @@ export default {
         }
         userDetail.value = userData;
         roleName.value = userData.role?.name || "Không có vai trò";
-      } catch (error) {}
+
+        // Lấy avatar
+        try {
+          const avatarRes = await getAvatar(props.userId);
+          avatarUrl.value = `data:image/png;base64,${avatarRes.data}`;
+        } catch (err) {
+          avatarUrl.value = "";
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        message.error("Không thể tải dữ liệu người dùng!");
+      }
     };
 
     // Khi mở popup, fetch dữ liệu
@@ -108,6 +138,7 @@ export default {
     return {
       userDetail,
       roleName,
+      avatarUrl,
       emit,
     };
   },

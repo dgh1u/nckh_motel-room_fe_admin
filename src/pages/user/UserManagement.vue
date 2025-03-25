@@ -30,8 +30,8 @@
           @change="handleFilterChange"
         >
           <a-select-option :value="null">Tất cả</a-select-option>
-          <a-select-option :value="false">Hoạt động</a-select-option>
-          <a-select-option :value="true">Bị khóa</a-select-option>
+          <a-select-option :value="'false'">Hoạt động</a-select-option>
+          <a-select-option :value="'true'">Bị khóa</a-select-option>
         </a-select>
         <!-- Bộ lọc vai trò -->
         <a-select
@@ -79,6 +79,7 @@
                   : record.role?.roleId === 'EMPLOYEE'
                   ? 'green'
                   : 'blue',
+              fontWeight: 'bold',
             }"
           >
             {{ record.role?.name || "Không có vai trò" }}
@@ -141,7 +142,12 @@ export default {
     const searchText = ref("");
     const selectedStatus = ref(null);
     const selectedRole = ref(null);
-    const pagination = ref({ current: 1, pageSize: 6, total: 0 });
+    const pagination = ref({
+      current: 1,
+      pageSize: 6,
+      total: 0,
+      showTotal: (total, range) => `Tổng cộng: ${total} bản ghi`,
+    });
     const router = useRouter();
     const showAddUserPopup = ref(false);
     const showUserDetailPopup = ref(false);
@@ -164,6 +170,7 @@ export default {
     // Cấu hình các cột cho bảng
     const columns = [
       { title: "STT", key: "stt" },
+      { title: "ID", dataIndex: "id", key: "id" },
       { title: "Họ tên", dataIndex: "fullName", key: "fullName" },
 
       { title: "Vai trò", key: "role" },
@@ -270,3 +277,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.ant-pagination .ant-pagination-total-text {
+  float: left;
+}
+</style>

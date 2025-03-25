@@ -37,3 +37,24 @@ export const updateUser = async (data) => {
     data,
   });
 };
+
+export const getAvatar = (id) => {
+  return axios({
+    url: `/user/${id}/avatar`,
+    method: "GET",
+  });
+};
+
+export const postAvatar = (id, avatarFile) => {
+  const formData = new FormData();
+  formData.append("avatar", avatarFile);
+
+  return axios({
+    url: `/user/${id}/avatar`,
+    method: "POST",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
