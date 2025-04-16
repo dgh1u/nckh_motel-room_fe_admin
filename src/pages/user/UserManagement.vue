@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <div class="p-4 pt-12">
     <AddUser v-model:open="showAddUserPopup" @user-added="fetchUsers" />
     <UserDetail v-model:open="showUserDetailPopup" :userId="selectedUserId" />
     <EditUser
@@ -12,8 +12,9 @@
       <div class="flex gap-4">
         <a-input
           v-model:value="searchText"
-          placeholder=" Tìm kiếm ..."
+          placeholder="Nhập Họ tên..."
           allowClear
+          style="width: 300px"
           class="custom-search"
           @input="handleSearch"
         >
@@ -23,10 +24,11 @@
         </a-input>
 
         <!-- Bộ lọc trạng thái -->
+
         <a-select
           v-model:value="selectedStatus"
           placeholder="Lọc theo trạng thái"
-          style="width: 200px"
+          style="width: 100px"
           @change="handleFilterChange"
         >
           <a-select-option :value="null">Tất cả</a-select-option>
@@ -37,7 +39,7 @@
         <a-select
           v-model:value="selectedRole"
           placeholder="Lọc theo vai trò"
-          style="width: 200px"
+          style="width: 120px"
           @change="handleFilterChange"
         >
           <a-select-option :value="null">Tất cả</a-select-option>

@@ -5,21 +5,22 @@
     @cancel="handleClose"
     width="800px"
   >
-    <div class="create-post max-w-3xl mx-auto p-4 space-y-4">
-      <div class="block items-center justify-center flex">
+    <div class="create-post space-y-4">
+      <!-- Tiêu đề tin đăng -->
+      <div class="block flex items-center justify-center">
         <span class="font-bold text-3xl text-teal-500">Chi tiết tin đăng</span>
       </div>
 
-      <!-- Hình thức -->
-      <div class="block bg-white rounded-xl">
+      <!-- Thông tin Hình thức -->
+      <div class="block bg-white rounded-xl p-4">
         <div class="py-2">
           <span class="font-bold text-base">Hình thức</span>
         </div>
-        <label>Loại hình <span class="text-red-500">*</span></label>
+        <label> Loại hình <span class="text-red-500">*</span> </label>
         <div class="flex rounded-lg mt-1 p-2">
           <span class="font-bold" :class="motelColor">{{ displayMotel }}</span>
         </div>
-        <!-- Trường trạng thái -->
+        <!-- Trạng thái -->
         <div class="py-2">
           <label>Trạng thái</label>
           <div class="flex rounded-lg mt-1 p-2">
@@ -28,7 +29,7 @@
             }}</a-tag>
           </div>
         </div>
-        <!-- Trường hiển thị -->
+        <!-- Hiển thị -->
         <div class="py-2">
           <label>Hiển thị</label>
           <div class="flex rounded-lg mt-1 p-2">
@@ -39,13 +40,67 @@
         </div>
       </div>
 
-      <!-- Thông tin mô tả -->
-      <div class="block bg-white rounded-xl">
+      <div class="py-2">
+        <span class="font-bold text-base">Hình ảnh</span>
+      </div>
+      <!-- Gallery hình ảnh -->
+      <div class="bg-white rounded-xl p-4 text-4xl shadow-lg">
+        <div
+          v-if="galleryImages.length > 0"
+          class="relative w-full h-96 bg-black text-white flex items-center justify-center mb-4 rounded-xl"
+        >
+          <button
+            class="absolute left-0 px-4 py-2 text-3xl"
+            @click="prevImage"
+            :disabled="galleryImages.length === 0"
+          >
+            &lt;
+          </button>
+
+          <img
+            :src="galleryImages[currentImageIndex]"
+            alt="gallery image"
+            class="max-w-3xl max-h-full max-w-150 object-contain"
+          />
+
+          <button
+            class="absolute right-0 px-4 py-2 text-3xl"
+            @click="nextImage"
+            :disabled="galleryImages.length === 0"
+          >
+            &gt;
+          </button>
+        </div>
+        <!-- Hàng thumbnail, cuộn ngang -->
+        <div
+          class="flex space-x-2 overflow-x-auto mb-6 items-center justify-center"
+        >
+          <div
+            v-for="(img, index) in galleryImages"
+            :key="index"
+            @click="currentImageIndex = index"
+            class="cursor-pointer flex-shrink-0 w-20 h-20 border rounded"
+            :class="{
+              'border-blue-500': currentImageIndex === index,
+              'border-gray-300': currentImageIndex !== index,
+            }"
+          >
+            <img
+              :src="img"
+              alt="Thumbnail"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin mô tả tin đăng -->
+      <div class="block bg-white rounded-xl p-4">
         <div class="py-2">
           <span class="font-bold text-base">Thông tin mô tả</span>
         </div>
         <div class="py-2">
-          <label>Tiêu đề </label>
+          <label>Tiêu đề</label>
           <div class="flex border border-gray-300 rounded-lg mt-1">
             <input
               v-model="formData.title"
@@ -57,7 +112,7 @@
           </div>
         </div>
         <div class="py-2">
-          <span class="block">Nội dung mô tả </span>
+          <span class="block">Nội dung mô tả</span>
           <div class="flex border border-gray-300 rounded-lg mt-1">
             <textarea
               v-model="formData.content"
@@ -69,7 +124,7 @@
           </div>
         </div>
         <div class="py-2">
-          <label>Giá cho thuê </label>
+          <label>Giá cho thuê</label>
           <div class="flex border border-gray-300 rounded-lg mt-1 w-120">
             <input
               v-model.number="formData.accomodation.price"
@@ -85,7 +140,7 @@
           </small>
         </div>
         <div class="py-2">
-          <label class="block text-gray-700">Diện tích </label>
+          <label class="block text-gray-700">Diện tích</label>
           <div
             class="flex items-center border border-gray-300 rounded-lg mt-1 w-120"
           >
@@ -100,7 +155,7 @@
           </div>
         </div>
         <div class="py-2">
-          <label class="block text-gray-700">Giá điện </label>
+          <label class="block text-gray-700">Giá điện</label>
           <div
             class="flex items-center border border-gray-300 rounded-lg mt-1 w-120"
           >
@@ -115,7 +170,7 @@
           </div>
         </div>
         <div class="py-2">
-          <label class="block text-gray-700">Giá nước </label>
+          <label class="block text-gray-700">Giá nước</label>
           <div
             class="flex items-center border border-gray-300 rounded-lg mt-1 w-120"
           >
@@ -131,10 +186,10 @@
         </div>
       </div>
 
-      <!-- Giới tính (chỉ áp dụng khi Motel là O_GHEP) -->
+      <!-- Thông tin Giới tính (áp dụng khi Motel là O_GHEP) -->
       <div
         v-if="formData.accomodation.motel === 'O_GHEP'"
-        class="block bg-white rounded-xl"
+        class="block bg-white rounded-xl p-4"
       >
         <div class="py-2">
           <span class="font-bold text-base">Giới tính</span>
@@ -151,13 +206,13 @@
         </div>
       </div>
 
-      <!-- Khu vực -->
-      <div class="block bg-white rounded-xl">
+      <!-- Thông tin Khu vực & Địa chỉ -->
+      <div class="block bg-white rounded-xl p-4">
         <div class="py-2">
           <span class="font-bold text-base">Khu vực</span>
         </div>
         <div class="py-2">
-          <label>Khu vực </label>
+          <label>Khu vực</label>
           <div class="flex border border-gray-300 rounded-lg mt-1">
             <input
               v-model="displayDistrict"
@@ -169,7 +224,7 @@
           </div>
         </div>
         <div class="py-2">
-          <label class="block text-gray-700">Địa chỉ </label>
+          <label class="block text-gray-700">Địa chỉ</label>
           <div
             class="flex items-center border border-gray-300 rounded-lg mt-1 w-120"
           >
@@ -199,8 +254,8 @@
         </div>
       </div>
 
-      <!-- Đặc điểm nổi bật -->
-      <div class="block bg-white rounded-xl">
+      <!-- Hiển thị Đặc điểm nổi bật -->
+      <div class="block bg-white rounded-xl p-4">
         <h3 class="text-xl font-semibold">Đặc điểm nổi bật</h3>
         <div class="grid grid-cols-2 gap-y-3">
           <div
@@ -289,7 +344,7 @@ import {
   defineProps,
   defineEmits,
 } from "vue";
-import { Modal, message, Tag } from "ant-design-vue";
+import { message } from "ant-design-vue";
 import { Check as CheckIcon } from "lucide-vue-next";
 import { getDetailPost, approvePost } from "@/apis/postService.js";
 
@@ -304,7 +359,26 @@ const modalVisible = computed({
   set: (value) => emit("update:open", value),
 });
 
-// Dữ liệu form với các trường approved, notApproved, del nằm ngoài accomodation
+// Biến chứa danh sách URL hình ảnh dạng gallery
+const galleryImages = ref([]);
+
+// Biến điều hướng ảnh
+const currentImageIndex = ref(0);
+const nextImage = () => {
+  if (galleryImages.value.length > 0) {
+    currentImageIndex.value =
+      (currentImageIndex.value + 1) % galleryImages.value.length;
+  }
+};
+const prevImage = () => {
+  if (galleryImages.value.length > 0) {
+    currentImageIndex.value =
+      (currentImageIndex.value - 1 + galleryImages.value.length) %
+      galleryImages.value.length;
+  }
+};
+
+// Dữ liệu form
 const formData = reactive({
   title: "",
   content: "",
@@ -320,7 +394,6 @@ const formData = reactive({
     gender: null,
     address: "",
     idDistrict: "",
-    // Đặc điểm nổi bật
     interior: false,
     airConditioner: false,
     heater: false,
@@ -362,7 +435,6 @@ const featureOptions = ref([
 // Bản đồ
 const mapAddress = ref("");
 const addressTimer = ref(null);
-const loading = ref(false);
 const displayMapAddress = computed(() => mapAddress.value.trim() || "VNUA");
 
 watch(
@@ -375,7 +447,7 @@ watch(
   }
 );
 
-// Computed property hiển thị Hình thức (văn bản bold, màu xanh lá nếu "Tìm phòng trọ", đỏ nếu "Tìm người ở ghép")
+// Computed property hiển thị Hình thức
 const displayMotel = computed(() => {
   if (formData.accomodation.motel === "PHONG_TRO") return "Tìm phòng trọ";
   if (formData.accomodation.motel === "O_GHEP") return "Tìm người ở ghép";
@@ -397,10 +469,7 @@ const displayDistrict = computed(() => {
   return district ? district.name : "";
 });
 
-// Computed property cho trạng thái:
-// Nếu approved=true và notApproved=false: "Đã duyệt"
-// Nếu approved=true và notApproved=true: "Chờ duyệt"
-// Nếu approved=false: "Bị khóa"
+// Computed property cho trạng thái bài đăng
 const displayStatus = computed(() => {
   if (formData.approved === true && formData.notApproved === false) {
     return "Đã duyệt";
@@ -413,9 +482,7 @@ const displayStatus = computed(() => {
 });
 
 // Computed property cho hiển thị: nếu del=false: "Hiển thị", nếu del=true: "Bị ẩn"
-const displayVisibility = computed(() => {
-  return formData.del ? "Bị ẩn" : "Hiển thị";
-});
+const displayVisibility = computed(() => (formData.del ? "Bị ẩn" : "Hiển thị"));
 
 // Computed property định nghĩa màu chữ cho Hình thức
 const motelColor = computed(() => {
@@ -439,7 +506,7 @@ const tagVisibilityColor = computed(() => {
   return "";
 });
 
-// Hàm duyệt bài (approve=true) và khóa bài (approve=false)
+// Hàm duyệt bài
 const handleApprove = async () => {
   try {
     await approvePost(props.postId, true);
@@ -451,6 +518,7 @@ const handleApprove = async () => {
   }
 };
 
+// Hàm khóa bài
 const handleBlock = async () => {
   try {
     await approvePost(props.postId, false);
@@ -464,13 +532,11 @@ const handleBlock = async () => {
 
 // Hàm lấy chi tiết bài đăng
 const fetchPostDetails = async (id) => {
-  console.log("Fetching post details for postId:", id);
   try {
     const response = await getDetailPost(id);
     const data = response.data || {};
     formData.title = data.title || "";
     formData.content = data.content || "";
-    // API trả về các trường approved, notApproved, del ngoài accomodationDTO
     formData.approved = data.approved ?? false;
     formData.notApproved = data.notApproved ?? false;
     formData.del = data.del ?? false;
@@ -480,20 +546,24 @@ const fetchPostDetails = async (id) => {
         formData.accomodation.idDistrict = data.accomodationDTO.district.id;
       }
     }
+    // Nếu API trả về mảng hình ảnh thì cập nhật lại galleryImages
+    if (data.imageStrings) {
+      galleryImages.value = data.imageStrings;
+      // Reset currentImageIndex về 0 nếu cần
+      currentImageIndex.value = 0;
+    }
   } catch (error) {
     console.error("Lỗi tải thông tin bài đăng:", error);
     message.error("Không thể tải thông tin bài đăng.");
   }
 };
 
-// Gọi API khi component mount
 onMounted(() => {
   if (props.postId) {
     fetchPostDetails(props.postId);
   }
 });
 
-// Watch để tự động fetch khi postId thay đổi
 watch(
   () => props.postId,
   (newPostId, oldPostId) => {

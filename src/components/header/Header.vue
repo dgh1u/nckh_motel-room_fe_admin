@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between items-center w-full relative px-4">
+  <div class="flex justify-between items-center w-full relative shadow p-4">
     <!-- Hiển thị icon và tiêu đề trang bên trái -->
     <div class="flex items-center gap-3 text-2xl pt-3">
       <component :is="currentPageIcon" class="w-6 h-6 pb-0.5 text-gray-700" />
@@ -80,7 +80,7 @@ const pageTitles = {
   "/home/dashboard": { title: "TỔNG QUAN", icon: ChartPie },
   "/home/action": { title: "HOẠT ĐỘNG", icon: Activity },
   "/home/user": { title: "NGƯỜI DÙNG", icon: Users },
-  "/home/recharge": { title: "NẠP TIỀN", icon: Wallet },
+  "/home/payment": { title: "NẠP TIỀN", icon: Wallet },
   "/home/post/motel": { title: "BÀI ĐĂNG NHÀ TRỌ", icon: House },
   "/home/post/shop": { title: "BÀI ĐĂNG CỬA HÀNG", icon: ShoppingBasket },
   "/home/post/delivery": { title: "BÀI ĐĂNG GIAO HÀNG", icon: Truck },

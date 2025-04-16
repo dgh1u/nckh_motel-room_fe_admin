@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto">
     <!-- Thay thanh input userId -->
-    <div class="flex items-center">
+    <div class="flex items-center pt-6">
       <a-input
         v-model:value="filterUserId"
         placeholder="Nhập userId..."

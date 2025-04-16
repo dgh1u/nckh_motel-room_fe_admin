@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <div class="p-4 pt-12">
     <MotelDetail
       v-if="selectedPostId"
       v-model:open="showMotelDetailPopup"
@@ -11,7 +11,7 @@
       <div class="flex gap-4">
         <a-input
           v-model:value="searchText"
-          placeholder="Tìm kiếm bài viết..."
+          placeholder="Nhập Tiêu đề bài viết..."
           style="width: 300px"
           allowClear
           class="custom-search"

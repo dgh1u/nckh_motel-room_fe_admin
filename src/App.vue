@@ -11,6 +11,6 @@
 <style>
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 </style>

@@ -87,7 +87,7 @@ const menuItems = [
       { label: "Giao hàng", path: "/home/post/delivery" },
     ],
   },
-  { label: "Nạp tiền", path: "/home/recharge", icon: Wallet },
+  { label: "Nạp tiền", path: "/home/payment", icon: Wallet },
 ];
 
 // Lọc menuItems thành 2 nhóm

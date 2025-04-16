@@ -30,6 +30,9 @@
           <a-form-item label="Địa chỉ" name="address">
             <a-input v-model:value="userForm.address" />
           </a-form-item>
+          <a-form-item label="Số dư tài khoản" name="balance">
+            <a-input v-model:value="userForm.balance" />
+          </a-form-item>
         </div>
 
         <!-- Cột phải -->
@@ -118,6 +121,7 @@ export default {
       email: "",
       fullName: "",
       address: "",
+      balance: "",
       phone: "",
       block: false,
       roleId: "",

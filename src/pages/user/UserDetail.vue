@@ -53,6 +53,13 @@
               class="custom-input"
             />
           </a-form-item>
+          <a-form-item label="Số dư tài khoản">
+            <a-input
+              :value="userDetail.balance"
+              disabled
+              class="custom-input"
+            />
+          </a-form-item>
         </div>
 
         <!-- Cột phải -->

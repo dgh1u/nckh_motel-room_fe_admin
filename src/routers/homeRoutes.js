@@ -1,6 +1,5 @@
 import Home from "../pages/home/Home.vue";
 import NotFound from "../pages/not-found/NotFound.vue";
-import Recharge from "../pages/recharge/Recharge.vue";
 import User from "../pages/user/UserManagement.vue";
 import Dashboard from "../pages/dashboard/Dashboard.vue";
 import Action from "../pages/action/Action.vue";
@@ -9,6 +8,7 @@ import Action from "../pages/action/Action.vue";
 import ShopPost from "../pages/post/ShopPost.vue";
 import DeliveryPost from "../pages/post/deliveryPost.vue";
 import MotelManagement from "../pages/post/motel/MotelManagement.vue";
+import PaymentManagement from "../pages/payment/PaymentManagement.vue";
 
 export default [
   {
@@ -20,9 +20,9 @@ export default [
     },
     children: [
       {
-        path: "recharge",
-        name: "Recharge",
-        component: Recharge,
+        path: "payment",
+        name: "PaymentManagement",
+        component: PaymentManagement,
         meta: { requiresAuth: false },
       },
       {
