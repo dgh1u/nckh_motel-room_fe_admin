@@ -5,10 +5,10 @@ import Dashboard from "../pages/dashboard/Dashboard.vue";
 import Action from "../pages/action/Action.vue";
 
 // Import các loại bài đăng
-import ShopPost from "../pages/post/ShopPost.vue";
-import DeliveryPost from "../pages/post/deliveryPost.vue";
 import MotelManagement from "../pages/post/motel/MotelManagement.vue";
 import PaymentManagement from "../pages/payment/PaymentManagement.vue";
+import FoodBeverageManagement from "../pages/post/food-beverage/FoodBeverageManagement.vue";
+import StoreUtilityManagement from "../pages/post/store-utility/StoreUtilityManagement.vue";
 
 export default [
   {
@@ -50,15 +50,15 @@ export default [
         meta: { requiresAuth: false },
       },
       {
-        path: "post/shop",
-        name: "ShopPost",
-        component: ShopPost,
+        path: "post/store-utility",
+        name: "StoreUtilityPost",
+        component: StoreUtilityManagement,
         meta: { requiresAuth: false },
       },
       {
-        path: "post/delivery",
-        name: "DeliveryPost",
-        component: DeliveryPost,
+        path: "post/food-beverage",
+        name: "FoodBeveragePost",
+        component: FoodBeverageManagement,
         meta: { requiresAuth: false },
       },
     ],

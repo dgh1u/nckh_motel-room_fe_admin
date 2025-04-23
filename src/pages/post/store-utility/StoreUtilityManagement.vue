@@ -1,8 +1,8 @@
 <template>
   <div class="p-4 pt-12">
-    <MotelDetail
+    <StoreUtilityDetail
       v-if="selectedPostId"
-      v-model:open="showMotelDetailPopup"
+      v-model:open="showStoreUtilityDetailPopup"
       :postId="selectedPostId"
     />
 
@@ -24,14 +24,56 @@
 
         <!-- Bộ lọc Loại hình -->
         <a-select
-          v-model:value="selectedMotelType"
+          v-model:value="selectedStoreUtilityType"
           placeholder="Loại hình"
           style="width: 120px"
           @change="handleFilterChange"
         >
           <a-select-option :value="null">Tất cả</a-select-option>
-          <a-select-option :value="'PHONG_TRO'">Phòng trọ</a-select-option>
-          <a-select-option :value="'O_GHEP'">Ở ghép</a-select-option>
+          <a-select-option :value="'CUA_HANG'">Cửa hàng</a-select-option>
+          <a-select-option :value="'TIEN_ICH'">TIện ích</a-select-option>
+        </a-select>
+
+        <!-- Bộ lọc Phân loại Cửa hàng - chỉ hiển thị khi chọn Cửa hàng -->
+        <a-select
+          v-if="selectedStoreUtilityType === 'CUA_HANG'"
+          v-model:value="selectedSecondMotel"
+          placeholder="Phân loại"
+          style="width: 150px"
+          @change="handleFilterChange"
+        >
+          <a-select-option :value="null">Tất cả</a-select-option>
+          <a-select-option value="Tạp hóa">Tạp hóa</a-select-option>
+          <a-select-option value="Cửa hàng tiện lợi"
+            >Cửa hàng tiện lợi</a-select-option
+          >
+          <a-select-option value="Văn phòng phẩm"
+            >Văn phòng phẩm</a-select-option
+          >
+          <a-select-option value="Điện lạnh">Điện lạnh</a-select-option>
+          <a-select-option value="Gia dụng">Gia dụng</a-select-option>
+          <a-select-option value="Hiệu thuốc">Hiệu thuốc</a-select-option>
+          <a-select-option value="Quần áo">Quần áo</a-select-option>
+          <a-select-option value="Hiệu sách">Hiệu sách</a-select-option>
+          <a-select-option value="Điện thoại">Điện thoại</a-select-option>
+          <a-select-option value="Máy tính">Máy tính</a-select-option>
+          <a-select-option value="Đồng hồ">Đồng hồ</a-select-option>
+          <a-select-option value="Kính mắt">Kính mắt</a-select-option>
+        </a-select>
+
+        <!-- Bộ lọc Phân loại - chỉ hiển thị khi chọn Cửa hàng -->
+        <a-select
+          v-if="selectedStoreUtilityType === 'TIEN_ICH'"
+          v-model:value="selectedSecondMotel"
+          placeholder="Phân loại"
+          style="width: 150px"
+          @change="handleFilterChange"
+        >
+          <a-select-option :value="null">Tất cả</a-select-option>
+          <a-select-option value="Photocopy">Photocopy</a-select-option>
+          <a-select-option value="Giặt là">Giặt là</a-select-option>
+          <a-select-option value="Học ngoại ngữ">Học ngoại ngữ</a-select-option>
+          <a-select-option value="Chụp ảnh">Chụp ảnh</a-select-option>
         </a-select>
 
         <!-- Bộ lọc trạng thái -->
@@ -93,10 +135,10 @@
             :style="{
               color:
                 record.accomodationDTO &&
-                record.accomodationDTO.motel === 'PHONG_TRO'
+                record.accomodationDTO.motel === 'CUA_HANG'
                   ? 'green'
                   : record.accomodationDTO &&
-                    record.accomodationDTO.motel === 'O_GHEP'
+                    record.accomodationDTO.motel === 'TIEN_ICH'
                   ? 'red'
                   : 'black',
               fontWeight: 'bold',
@@ -104,14 +146,18 @@
           >
             {{
               record.accomodationDTO &&
-              record.accomodationDTO.motel === "PHONG_TRO"
-                ? "Phòng trọ"
+              record.accomodationDTO.motel === "CUA_HANG"
+                ? "Cửa hàng"
                 : record.accomodationDTO &&
-                  record.accomodationDTO.motel === "O_GHEP"
-                ? "Ở ghép"
+                  record.accomodationDTO.motel === "TIEN_ICH"
+                ? "TIện ích"
                 : "Không xác định"
             }}
           </span>
+        </template>
+
+        <template v-if="column.key === 'secondMotel'">
+          {{ record.accomodationDTO.secondMotel }}
         </template>
 
         <!-- Tiêu đề -->
@@ -187,7 +233,7 @@ import {
   SearchOutlined,
   EyeOutlined,
 } from "@ant-design/icons-vue";
-import MotelDetail from "./MotelDetail.vue";
+import StoreUtilityDetail from "./StoreUtilityDetail.vue";
 
 export default {
   components: {
@@ -196,7 +242,7 @@ export default {
     DeleteOutlined,
     SearchOutlined,
 
-    MotelDetail,
+    StoreUtilityDetail,
   },
   setup() {
     const posts = ref([]);
@@ -209,11 +255,12 @@ export default {
       total: 0,
       showTotal: (total, range) => `Tổng cộng: ${total} bản ghi`,
     });
-    const showMotelDetailPopup = ref(false);
+    const showStoreUtilityDetailPopup = ref(false);
     const selectedPostId = ref(null);
     const selectedUserId = ref(null);
     const selectedDel = ref(null); // Định nghĩa lọc Hiển thị
-    const selectedMotelType = ref(null); // Định nghĩa lọc Loại hình
+    const selectedStoreUtilityType = ref(null); // Định nghĩa lọc Loại hình
+    const selectedSecondMotel = ref(null);
 
     // Cấu hình các cột cho bảng
     const columns = [
@@ -222,6 +269,7 @@ export default {
 
       { title: "Tiêu đề", dataIndex: "title", key: "title" },
       { title: "Loại hình", dataIndex: "motel", key: "motel" },
+      { title: "Phân loại", dataIndex: "secondMotel", key: "secondMotel" },
       { title: "Ngày tạo", dataIndex: "createAt", key: "createAt" },
       { title: "Trạng thái", key: "approved" },
       { title: "Người đăng", key: "user" },
@@ -268,13 +316,17 @@ export default {
         }
 
         // Lọc theo Loại hình (accomodationDTO.motel)
-        if (selectedMotelType.value === "PHONG_TRO") {
-          params.motel = "PHONG_TRO";
-        } else if (selectedMotelType.value === "O_GHEP") {
-          params.motel = "O_GHEP";
+        if (selectedStoreUtilityType.value === "CUA_HANG") {
+          params.motel = "CUA_HANG";
+        } else if (selectedStoreUtilityType.value === "TIEN_ICH") {
+          params.motel = "TIEN_ICH";
         } else {
           // Nếu không chọn lọc cụ thể, gửi cả hai giá trị
-          params.motels = "PHONG_TRO,O_GHEP";
+          params.motels = "CUA_HANG,TIEN_ICH";
+        }
+
+        if (selectedSecondMotel.value) {
+          params.secondMotel = selectedSecondMotel.value;
         }
 
         // Log dữ liệu lọc gửi đi
@@ -315,7 +367,7 @@ export default {
 
     const viewPost = (record) => {
       selectedPostId.value = record.id;
-      showMotelDetailPopup.value = true;
+      showStoreUtilityDetailPopup.value = true;
     };
 
     // Xác nhận và xóa bài viết
@@ -353,12 +405,13 @@ export default {
       confirmDelete,
       viewPost,
 
-      showMotelDetailPopup,
+      showStoreUtilityDetailPopup,
       selectedPostId,
 
       selectedUserId,
-      selectedMotelType,
+      selectedStoreUtilityType,
       selectedDel,
+      selectedSecondMotel,
     };
   },
 };

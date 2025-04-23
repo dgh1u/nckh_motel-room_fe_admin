@@ -82,9 +82,9 @@ const menuItems = [
     label: "Bài đăng",
     icon: FileText,
     children: [
-      { label: "Nhà trọ", path: "/home/post/motel" },
-      { label: "Cửa hàng", path: "/home/post/shop" },
-      { label: "Giao hàng", path: "/home/post/delivery" },
+      { label: "Tìm trọ", path: "/home/post/motel" },
+      { label: "Ăn uống", path: "/home/post/food-beverage" },
+      { label: "Cửa hàng & Tiện ích", path: "/home/post/store-utility" },
     ],
   },
   { label: "Nạp tiền", path: "/home/payment", icon: Wallet },

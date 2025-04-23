@@ -1,8 +1,8 @@
 <template>
   <div class="p-4 pt-12">
-    <MotelDetail
+    <FoodBeverageDetail
       v-if="selectedPostId"
-      v-model:open="showMotelDetailPopup"
+      v-model:open="showFoodBeverageDetailPopup"
       :postId="selectedPostId"
     />
 
@@ -24,14 +24,51 @@
 
         <!-- Bộ lọc Loại hình -->
         <a-select
-          v-model:value="selectedMotelType"
+          v-model:value="selectedFoodBeverageType"
           placeholder="Loại hình"
           style="width: 120px"
           @change="handleFilterChange"
         >
           <a-select-option :value="null">Tất cả</a-select-option>
-          <a-select-option :value="'PHONG_TRO'">Phòng trọ</a-select-option>
-          <a-select-option :value="'O_GHEP'">Ở ghép</a-select-option>
+          <a-select-option :value="'QUAN_AN'">Quán ăn</a-select-option>
+          <a-select-option :value="'QUAN_NUOC'">Quán nước</a-select-option>
+        </a-select>
+
+        <!-- Bộ lọc Phân loại Quán ăn - chỉ hiển thị khi chọn Quán ăn -->
+        <a-select
+          v-if="selectedFoodBeverageType === 'QUAN_AN'"
+          v-model:value="selectedSecondMotel"
+          placeholder="Phân loại"
+          style="width: 150px"
+          @change="handleFilterChange"
+        >
+          <a-select-option :value="null">Tất cả</a-select-option>
+          <a-select-option value="Cơm">Cơm</a-select-option>
+          <a-select-option value="Món nước">Món nước</a-select-option>
+          <a-select-option value="Xôi và Bánh mì"
+            >Xôi và Bánh mì</a-select-option
+          >
+          <a-select-option value="Cháo">Cháo</a-select-option>
+          <a-select-option value="Ăn vặt">Ăn vặt</a-select-option>
+          <a-select-option value="Đồ ăn nhanh">Đồ ăn nhanh</a-select-option>
+          <a-select-option value="Quán nhậu">Quán nhậu</a-select-option>
+        </a-select>
+
+        <!-- Bộ lọc Phân loại - chỉ hiển thị khi chọn Quán ăn -->
+        <a-select
+          v-if="selectedFoodBeverageType === 'QUAN_NUOC'"
+          v-model:value="selectedSecondMotel"
+          placeholder="Phân loại"
+          style="width: 150px"
+          @change="handleFilterChange"
+        >
+          <a-select-option :value="null">Tất cả</a-select-option>
+          <a-select-option value="Quán Cà phê">Quán Cà phê</a-select-option>
+          <a-select-option value="Quán Trà chanh"
+            >Quán Trà chanh</a-select-option
+          >
+          <a-select-option value="Trà đá vỉa hè">Trà đá vỉa hè</a-select-option>
+          <a-select-option value="Quán Trà sữa">Quán Trà sữa</a-select-option>
         </a-select>
 
         <!-- Bộ lọc trạng thái -->
@@ -93,10 +130,10 @@
             :style="{
               color:
                 record.accomodationDTO &&
-                record.accomodationDTO.motel === 'PHONG_TRO'
+                record.accomodationDTO.motel === 'QUAN_AN'
                   ? 'green'
                   : record.accomodationDTO &&
-                    record.accomodationDTO.motel === 'O_GHEP'
+                    record.accomodationDTO.motel === 'QUAN_NUOC'
                   ? 'red'
                   : 'black',
               fontWeight: 'bold',
@@ -104,14 +141,18 @@
           >
             {{
               record.accomodationDTO &&
-              record.accomodationDTO.motel === "PHONG_TRO"
-                ? "Phòng trọ"
+              record.accomodationDTO.motel === "QUAN_AN"
+                ? "Quán ăn"
                 : record.accomodationDTO &&
-                  record.accomodationDTO.motel === "O_GHEP"
-                ? "Ở ghép"
+                  record.accomodationDTO.motel === "QUAN_NUOC"
+                ? "Quán nước"
                 : "Không xác định"
             }}
           </span>
+        </template>
+
+        <template v-if="column.key === 'secondMotel'">
+          {{ record.accomodationDTO.secondMotel }}
         </template>
 
         <!-- Tiêu đề -->
@@ -187,7 +228,7 @@ import {
   SearchOutlined,
   EyeOutlined,
 } from "@ant-design/icons-vue";
-import MotelDetail from "./MotelDetail.vue";
+import FoodBeverageDetail from "./FoodBeverageDetail.vue";
 
 export default {
   components: {
@@ -196,7 +237,7 @@ export default {
     DeleteOutlined,
     SearchOutlined,
 
-    MotelDetail,
+    FoodBeverageDetail,
   },
   setup() {
     const posts = ref([]);
@@ -209,11 +250,12 @@ export default {
       total: 0,
       showTotal: (total, range) => `Tổng cộng: ${total} bản ghi`,
     });
-    const showMotelDetailPopup = ref(false);
+    const showFoodBeverageDetailPopup = ref(false);
     const selectedPostId = ref(null);
     const selectedUserId = ref(null);
     const selectedDel = ref(null); // Định nghĩa lọc Hiển thị
-    const selectedMotelType = ref(null); // Định nghĩa lọc Loại hình
+    const selectedFoodBeverageType = ref(null); // Định nghĩa lọc Loại hình
+    const selectedSecondMotel = ref(null);
 
     // Cấu hình các cột cho bảng
     const columns = [
@@ -222,6 +264,7 @@ export default {
 
       { title: "Tiêu đề", dataIndex: "title", key: "title" },
       { title: "Loại hình", dataIndex: "motel", key: "motel" },
+      { title: "Phân loại", dataIndex: "secondMotel", key: "secondMotel" },
       { title: "Ngày tạo", dataIndex: "createAt", key: "createAt" },
       { title: "Trạng thái", key: "approved" },
       { title: "Người đăng", key: "user" },
@@ -268,13 +311,17 @@ export default {
         }
 
         // Lọc theo Loại hình (accomodationDTO.motel)
-        if (selectedMotelType.value === "PHONG_TRO") {
-          params.motel = "PHONG_TRO";
-        } else if (selectedMotelType.value === "O_GHEP") {
-          params.motel = "O_GHEP";
+        if (selectedFoodBeverageType.value === "QUAN_AN") {
+          params.motel = "QUAN_AN";
+        } else if (selectedFoodBeverageType.value === "QUAN_NUOC") {
+          params.motel = "QUAN_NUOC";
         } else {
           // Nếu không chọn lọc cụ thể, gửi cả hai giá trị
-          params.motels = "PHONG_TRO,O_GHEP";
+          params.motels = "QUAN_AN,QUAN_NUOC";
+        }
+
+        if (selectedSecondMotel.value) {
+          params.secondMotel = selectedSecondMotel.value;
         }
 
         // Log dữ liệu lọc gửi đi
@@ -315,7 +362,7 @@ export default {
 
     const viewPost = (record) => {
       selectedPostId.value = record.id;
-      showMotelDetailPopup.value = true;
+      showFoodBeverageDetailPopup.value = true;
     };
 
     // Xác nhận và xóa bài viết
@@ -353,12 +400,13 @@ export default {
       confirmDelete,
       viewPost,
 
-      showMotelDetailPopup,
+      showFoodBeverageDetailPopup,
       selectedPostId,
 
       selectedUserId,
-      selectedMotelType,
+      selectedFoodBeverageType,
       selectedDel,
+      selectedSecondMotel,
     };
   },
 };
