@@ -5,6 +5,7 @@ import zalopayLogo from "@/assets/bankLogo/ZaloPay.svg";
 import msbLogo from "@/assets/bankLogo/MSBbank.svg";
 import tpbankLogo from "@/assets/bankLogo/TPbank.svg";
 import vpbankLogo from "@/assets/bankLogo/VPBank.svg";
+import vietcombankLogo from "@/assets/bankLogo/Vietcombank.svg";
 
 export const bankMapping = {
   "01201001": {
@@ -31,6 +32,10 @@ export const bankMapping = {
   970432: {
     name: "VPBank",
     logo: vpbankLogo,
+  },
+  "01203001": {
+    name: "Vietcombank",
+    logo: vietcombankLogo,
   },
   "": {
     name: "MB Bank",
